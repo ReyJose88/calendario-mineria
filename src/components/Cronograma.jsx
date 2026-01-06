@@ -21,7 +21,7 @@ const Cronograma = () => {
   const [diasTrabajo, setDiasTrabajo] = useState(14);
   const [diasDescanso, setDiasDescanso] = useState(7);
   const [diasInduccion, setDiasInduccion] = useState(5);
-  const [totalDiasPerforados, setTotalDiasPerforados] = useState(30);
+  const [totalDiasPerforados, setTotalDiasPerforados] = useState(90);
   const [cronograma, setSchedule] = useState(null);
   const [validacion, setValidacion] = useState(null);
 
