@@ -26,11 +26,11 @@ const Cronograma = () => {
   const [validacion, setValidacion] = useState(null);
 
   const casosPrueba = [
-    { name: 'Caso 1: 14x7, 5 inducción', trabajo: 14, descanso: 7, induccion: 5, perforacion: 30 },
-    { name: 'Caso 2: 21x7, 3 inducción', trabajo: 21, descanso: 7, induccion: 3, perforacion: 30 },
-    { name: 'Caso 3: 10x5, 2 inducción', trabajo: 10, descanso: 5, induccion: 2, perforacion: 30 },
-    { name: 'Caso 4: 14x6, 4 inducción', trabajo: 14, descanso: 6, induccion: 4, perforacion: 30 },
-    { name: 'Caso 5: 7x7, 1 inducción', trabajo: 7, descanso: 7, induccion: 1, perforacion: 30 }
+    { name: 'Caso 1: 14x7, 5 inducción', trabajo: 14, descanso: 7, induccion: 5, perforacion: 90 },
+    { name: 'Caso 2: 21x7, 3 inducción', trabajo: 21, descanso: 7, induccion: 3, perforacion: 90 },
+    { name: 'Caso 3: 10x5, 2 inducción', trabajo: 10, descanso: 5, induccion: 2, perforacion: 90 },
+    { name: 'Caso 4: 14x6, 4 inducción', trabajo: 14, descanso: 6, induccion: 4, perforacion: 90 },
+    { name: 'Caso 5: 7x7, 1 inducción', trabajo: 7, descanso: 7, induccion: 1, perforacion: 90 }
   ];
 
   const cargarCasosPrueba = (casosPrueba) => {
