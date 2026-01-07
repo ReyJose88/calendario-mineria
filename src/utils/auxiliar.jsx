@@ -69,25 +69,29 @@ function generarCronogramaInicial(diasTrabajo, diasDescanso, diasInduccion, dias
   return cronograma;
 }
 
-/**
- *genera el cronograma de S2 y S3
- */
-function generarS2S3(s1, diasTrabajo, diasDescanso, diasInduccion) {
-  let diasVacio = diasDescanso - 3;
-  let s2 = generarCronogramaInicial(diasTrabajo, diasVacio, diasInduccion, diasTrabajo - diasVacio);
-  
-  let inicioS3 = s1.findIndex(state => state === ESTADOS.BAJADA);
-  let s3 = Array(inicioS3 - diasInduccion - 1).fill(ESTADOS.EMPTY)
-      .concat(
-    generarCronogramaInicial(diasTrabajo, diasVacio, diasInduccion, diasTrabajo - diasVacio) 
-  );
-  
+function generarS2(s1, diasDescanso, diasInduccion){
+  //iniciar S2
+  let s2 = [ESTADOS.SUBIDA];
+  let tmp = 0;
+  while(tmp < diasInduccion) {
+    s2.push(ESTADOS.INDUCCION)
+    tmp++;
+  }
 
+  //poner a S2 a perforar hasta la primera subida de S1
+  let cantidadPerforacionS2 = buscarDesdeIndice(s1, 2, state => state === ESTADOS.SUBIDA);
+  tmp = s2.length;
+  while(tmp < cantidadPerforacionS2) {
+    s2.push(ESTADOS.PERFORACION)
+    tmp++;
+  }
+
+  //continuar el cronograma de S2
   let contadorS2 = s2.length;
   while(s2.length < s1.length){
     if (s1[contadorS2] === ESTADOS.PERFORACION){
       let proximaBajadaS1 = buscarDesdeIndice(s1, contadorS2, state => state === ESTADOS.BAJADA);
-      if ((proximaBajadaS1 - contadorS2) + 1 < diasDescanso) {
+      if ((proximaBajadaS1 - contadorS2) + 2 < diasDescanso) {
         s2.push(ESTADOS.PERFORACION)
       } else {
         s2.push(ESTADOS.EMPTY)
@@ -99,7 +103,32 @@ function generarS2S3(s1, diasTrabajo, diasDescanso, diasInduccion) {
   }
   s2 = transformarTodosSegmentosVacios(s2);
 
-  
+  return s2;
+}
+
+/**
+ *genera el cronograma de S2 y S3
+ */
+function generarS3(s1, s2, diasInduccion) {
+  //iniciar a S3
+  let inicioS3 = s1.findIndex(state => state === ESTADOS.BAJADA) - diasInduccion - 1;
+  let s3 = Array(inicioS3).fill(ESTADOS.EMPTY);
+  s3.push(ESTADOS.SUBIDA);
+  let tmp = 0;
+  while(tmp < diasInduccion) {
+    s3.push(ESTADOS.INDUCCION)
+    tmp++;
+  }
+
+  //poner a S3 a perforar hasta la primera subida de S2
+  tmp = s3.length;
+  let cantidadPerforacionS3 = buscarDesdeIndice(s2, inicioS3, state => state === ESTADOS.SUBIDA);
+  while(tmp < cantidadPerforacionS3) {
+    s3.push(ESTADOS.PERFORACION)
+    tmp++;
+  }
+
+  //seguir creando cronograma de S3
   let contadorS3 = s3.length;  
   while(s3.length < s1.length){
     if (s1[contadorS3] === ESTADOS.PERFORACION && s2[contadorS3] === ESTADOS.PERFORACION){
@@ -113,11 +142,11 @@ function generarS2S3(s1, diasTrabajo, diasDescanso, diasInduccion) {
 
   //limpiar inicio de s3
   let dia = 0;
-  while(dia < (inicioS3 - diasInduccion - 1)) {
+  while(dia < inicioS3) {
     s3[dia++] = ESTADOS.EMPTY;
   }
 
-  return {s1, s2, s3};
+  return s3;
 }
 
 function transformarTodosSegmentosVacios(cronograma) {
@@ -189,8 +218,9 @@ export function generarCronograma(diasTrabajo, diasDescanso, diasInduccion, dias
     throw new Error('Días de trabajo insuficientes para la inducción');
   }
   
-  let s1Initial = generarCronogramaInicial(diasTrabajo, diasDescanso, diasInduccion, diasPerforacion);
-  let {s1, s2, s3} = generarS2S3(s1Initial, diasTrabajo, diasDescanso, diasInduccion);
+  let s1 = generarCronogramaInicial(diasTrabajo, diasDescanso, diasInduccion, diasPerforacion);
+  let s2 = generarS2(s1, diasDescanso, diasInduccion);
+  let s3 = generarS3(s1, s2, diasInduccion);
 
   return {s1, s2, s3};
 }
